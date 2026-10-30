@@ -2,17 +2,23 @@
   "id": "WorkshopPiHealth",
   "name": "System Health",
   "author": "jhonf441",
-  "version": "2.4.4",
+  "version": "2.4.5",
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/jhonf441/WorkshopPiHealth",
   "tags": [
     "health",
     "monitor"
   ],
-  "dwcVersion": "3.7",
+  "dwcVersion": "3.6",
   "dwcDependencies": [
     "WorkshopService"
   ],
-  "sbcRequired": false,
-  "data": {}
+  "sbcRequired": true,
+  "sbcDsfVersion": "3.6",
+  "data": {},
+  "dwcFiles": [
+    "css/WorkshopPiHealth.327be9ed.css",
+    "js/WorkshopPiHealth.a8276138.js",
+    "js/WorkshopPiHealth.a8276138.js.gz"
+  ]
 }
