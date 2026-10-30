@@ -4,6 +4,16 @@
 
 export const RANGES = ['1h', '6h', '24h', '7d']
 
+// the arguments of health.history for a range of range-picker.js ({ from, to } in epoch seconds; the service keeps 7 days by default)
+export function historyArgs(range, limit) {
+	return { since: range.from, until: range.to, limit: limit || 300 }
+}
+
+// the live samples of this browser (the last hour, every 5 s) only belong to a stretch that ends now
+export function endsNow(value) {
+	return !!value && value.type === 'relative'
+}
+
 // server: array or undefined (averaged points, oldest first); live: array (every 5 s, up to 1 h); stepMs: width of a server bucket.
 // The result is one array, oldest first, without two points closer than a bucket and without going back in time.
 export function mergeSeries(server, live, stepMs) {

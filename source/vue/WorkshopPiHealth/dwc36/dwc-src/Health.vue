@@ -21,9 +21,7 @@
 				</div>
 				<div v-else class="d-flex align-center flex-wrap mt-2" style="gap:8px">
 					<span class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.history_range') }}</span>
-					<v-btn-toggle v-model="range" mandatory dense>
-						<v-btn v-for="r in RANGES" :key="r" small :value="r">{{ r }}</v-btn>
-					</v-btn-toggle>
+					<range-picker v-model="rangeVal" />
 					<span class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.history_kept_by_service', { days: serverHist.retention_days }) }}</span>
 				</div>
 			</v-card-text>
@@ -318,7 +316,9 @@ import { pluginOf, pathExists } from './workshop-ids.js' // Id nuevo o viejo del
 import { serviceTexts } from './service-text.js'
 import ErrorNotice from './ErrorNotice.vue' // vue/_shared
 import { roleMixin } from './role-mixin.js' // what the role may do (vue/_shared)
-import { RANGES, mergeAll } from './health-history.js' // history kept by the service + live samples
+import { mergeAll, historyArgs, endsNow } from './health-history.js' // history kept by the service + live samples
+import RangePicker from './RangePicker.vue' // vue/_shared36
+import { relative, resolve, asEpoch } from './range-picker.js' // vue/_shared36
 
 // Thresholds [alert, limit]. Temperature: the Pi 4 lowers the CPU
 // speed (throttling) from ~80 C; 70 C is already a reason to look at the ventilation.
@@ -430,16 +430,17 @@ start();
 
 export default {
 	mixins: [roleMixin],
-	components: { PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice },
+	components: { PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
 	data() {
-		return { H: H, RANGES: RANGES, range: '1h', serverHist: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false };
+		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false };
 	},
 	computed: {
 		// what the charts draw: the history of the service (health.history) joined with this browser's live samples; with an old service
 		// (no health.history) only the live samples, as before
 		S() {
 			const sh = this.serverHist;
-			return mergeAll(sh ? sh.series : null, H, sh ? sh.step_s * 1000 : 0);
+			// the live samples of this browser only join a range that ends now
+			return mergeAll(sh ? sh.series : null, endsNow(this.rangeVal) ? H : {}, sh ? sh.step_s * 1000 : 0);
 		},
 		// start-up card: what this board lets the page read (a Duet alone, a Pi without WiFi or another SBC are grey)
 		rowsStartup() {
@@ -580,7 +581,7 @@ export default {
 		clearTimeout(this._startupWait);
 	},
 	watch: {
-		range() {
+		rangeVal() {
 			this.loadHistory();
 		}
 	},
@@ -588,7 +589,7 @@ export default {
 		// health.history: an old service answers unknown_op (or refuses the call): then nothing changes, the charts are the live ones
 		async loadHistory() {
 			try {
-				const r = await api('health.history', { range: this.range, limit: 300 });
+				const r = await api('health.history', historyArgs(asEpoch(resolve(this.rangeVal, new Date())), 300));
 				this.serverHist = r && r.series ? r : null;
 			} catch (e) {
 				if (!this.serverHist || (e && e.code === 'unknown_op')) this.serverHist = null;

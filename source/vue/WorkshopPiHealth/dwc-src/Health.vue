@@ -21,9 +21,7 @@
 				</div>
 				<div v-else class="d-flex align-center flex-wrap mt-2" style="gap:8px">
 					<span class="text-body-small text-medium-emphasis">{{ $t('plugins.WorkshopPiHealth.health.history_range') }}</span>
-					<v-btn-toggle v-model="range" mandatory density="compact">
-						<v-btn v-for="r in RANGES" :key="r" size="small" :value="r">{{ r }}</v-btn>
-					</v-btn-toggle>
+					<range-picker v-model="rangeVal" />
 					<span class="text-body-small text-medium-emphasis">{{ $t('plugins.WorkshopPiHealth.health.history_kept_by_service', { days: serverHist.retention_days }) }}</span>
 				</div>
 			</v-card-text>
@@ -314,7 +312,9 @@ import { api } from './workshop-api.js'
 import { pluginOf, dataOf } from './workshop-ids.js' // Id nuevo o viejo del plugin
 import { serviceTexts } from './service-text.js'
 import { useRole } from './use-role.js' // what the role may do (vue/_shared)
-import { RANGES, mergeAll } from './health-history.js' // history kept by the service + live samples
+import { mergeAll, historyArgs, endsNow } from './health-history.js' // history kept by the service + live samples
+import RangePicker from './RangePicker.vue' // vue/_shared
+import { relative, resolve, asEpoch } from './range-picker.js' // vue/_shared
 import { H, THRESHOLD } from './health-samples.js' // live samples, collected since the plugin loaded
 
 const router = useRouter()
@@ -331,7 +331,7 @@ const ALERTS = [
 	{ kind: 'health_disk', label: i18n.t('plugins.WorkshopPiHealth.health.low_space_or_large_database'), detail: u => i18n.t('plugins.WorkshopPiHealth.health.alert_disk_detail', { gb: u.disk_alert_gb || 2, pct: u.disk_alert_pct || 10, mb: u.base_alert_mb || 200 }) }
 ]
 
-const range = ref('1h')
+const rangeVal = ref(relative(1, 'hours')) // the time range of the history (range-picker.js)
 const serverHist = ref(null)
 const changing = ref(null)
 const errorAlert = ref(null)
@@ -341,7 +341,8 @@ const startupWait = ref(false)
 // (no health.history) only the live samples, as before
 const S = computed(() => {
 	const sh = serverHist.value
-	return mergeAll(sh ? sh.series : null, H, sh ? sh.step_s * 1000 : 0)
+	// the live samples of this browser only join a range that ends now
+	return mergeAll(sh ? sh.series : null, endsNow(rangeVal.value) ? H : {}, sh ? sh.step_s * 1000 : 0)
 })
 
 const sbc = computed(() => machineModel().sbc || null)
@@ -460,12 +461,12 @@ onBeforeUnmount(() => {
 	clearInterval(heartbeatTimer)
 	clearTimeout(startupTimer)
 })
-watch(range, () => loadHistory())
+watch(rangeVal, () => loadHistory())
 
 // health.history: an old service answers unknown_op (or refuses the call): then nothing changes, the charts are the live ones
 async function loadHistory() {
 	try {
-		const r = await api('health.history', { range: range.value, limit: 300 })
+		const r = await api('health.history', historyArgs(asEpoch(resolve(rangeVal.value, new Date())), 300))
 		serverHist.value = r && r.series ? r : null
 	} catch (e) {
 		if (!serverHist.value || (e && e.code === 'unknown_op')) serverHist.value = null
