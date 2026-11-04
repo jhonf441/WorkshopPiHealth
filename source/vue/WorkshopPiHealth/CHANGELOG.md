@@ -1,5 +1,9 @@
 # WorkshopPiHealth -- historial de versiones
 
+## 2.4.11 -- 2026-11-03
+
+- Session: standard login notice (shared ErrorNotice)
+
 ## 2.4.10 -- 2026-11-03
 
 - Charts: the unit label no longer overlaps the top value of the Y axis
