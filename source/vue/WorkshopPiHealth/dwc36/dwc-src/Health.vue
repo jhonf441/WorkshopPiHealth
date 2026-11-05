@@ -18,8 +18,8 @@
 				</div>
 				<div v-if="!serverHist" class="text-caption grey--text">
 					{{ $t('plugins.WorkshopPiHealth.health.history_this_browser') }}
-					<span v-if="historyRefusal" class="lock-reason"><v-icon x-small left>mdi-lock-outline</v-icon>{{ historyRefusal }}</span>
 				</div>
+				<lock-reason v-if="!serverHist && historyKind" :kind="historyKind" :text="historyKind === 'role' ? historyRefusal : ''" class="mt-1" />
 				<div v-else class="d-flex align-center flex-wrap mt-2" style="gap:8px">
 					<span class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.history_range') }}</span>
 					<range-picker v-model="rangeVal" />
@@ -293,7 +293,7 @@
 							<div class="text-caption grey--text ml-12">{{ a.detail(threshold) }}</div>
 						</v-col>
 					</v-row>
-					<div v-if="!atLeast('technician')" class="text-caption grey--text mt-1 lock-reason"><v-icon x-small left>mdi-lock-outline</v-icon>{{ lockText('technician') }}</div>
+					<lock-reason min="technician" class="mt-1" />
 					<error-notice :error="errorAlert" class="mt-1" />
 				</v-card>
 			</v-col>
@@ -319,12 +319,12 @@ import { pluginOf, pathExists } from './workshop-ids.js' // Id nuevo o viejo del
 import { serviceTexts } from './service-text.js'
 import ErrorNotice from './ErrorNotice.vue' // vue/_shared
 import { roleMixin } from './role-mixin.js' // what the role may do (vue/_shared)
-import { isRefusal } from './session-note.js'
-import { refusalNow } from './session-now.js' // a refusal told by its cause
+import { isRefusal, refusalNow, refusalCauseNow } from './session-refusal.js' // a refusal told by its cause: isRefusal, refusalNow, refusalCauseNow
 import { mergeAll, historyArgs, endsNow } from './health-history.js' // history kept by the service + live samples
 import RangePicker from './RangePicker.vue' // vue/_shared36
 import HelpTip from './HelpTip.vue' // vue/_shared36
 import { relative, resolve, asEpoch } from './range-picker.js' // vue/_shared36
+import LockReason from './LockReason.vue' // vue/_shared36
 
 // Thresholds [alert, limit]. Temperature: the Pi 4 lowers the CPU
 // speed (throttling) from ~80 C; 70 C is already a reason to look at the ventilation.
@@ -436,12 +436,20 @@ start();
 
 export default {
 	mixins: [roleMixin],
-	components: { HelpTip, PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
+	// what the previous person read stays in no data of the page (ESTANDAR 3.1); onSessionChange reads the history again
+	sessionData: ['serverHist', 'historyError', 'errorAlert', 'changing'],
+	sessionErrors: ['historyError', 'errorAlert'], // what a refusal or a failure said: cleared when the person signs in, out or changes role (role-mixin.js)
+	components: { LockReason, HelpTip, PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
 	data() {
 		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, historyError: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false };
 	},
 	computed: {
 		// the history of the service was refused: why (no session / role), so "this browser only" is not left without a cause
+		// the cause of that refusal, to draw it as the calm note of its cause
+		historyKind() {
+			void this.identityTick;
+			return refusalCauseNow(this.historyError);
+		},
 		historyRefusal() {
 			void this.identityTick;
 			return refusalNow(this.historyError, 'viewer');

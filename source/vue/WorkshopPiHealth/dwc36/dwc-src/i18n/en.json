@@ -238,7 +238,6 @@
 		"service_not_running": "is not running (Settings > Plugins)",
 		"service_sign_in": "needs you to sign in to be checked",
 		"service_role": "your role cannot check it: a technician is needed",
-		"locked": "Not signed in: sign in to create or change files from here.",
 		"row_sbc": "Duet joined to the Pi (SBC mode)",
 		"row_sbc_tip": "This screen watches the Pi that is joined to the Duet. A Duet on its own has no Pi to watch.",
 		"sbc_ok": "SBC mode on",

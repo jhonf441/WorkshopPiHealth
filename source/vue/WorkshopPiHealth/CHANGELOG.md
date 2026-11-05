@@ -1,5 +1,13 @@
 # WorkshopPiHealth -- historial de versiones
 
+## 2.4.18 -- 2026-11-05
+
+- Session state, refusals and notices unified; errors kept as objects; 403 names the action
+
+## 2.4.17 -- 2026-11-05
+
+- Session notices and help standard: one voice for sign-in and role refusals, shared help tips, identity change resets what the session showed
+
 ## 2.4.16 -- 2026-11-05
 
 - Darker primary button hover, Workbench save label, generic RS485 notes
