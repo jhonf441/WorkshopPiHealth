@@ -23,6 +23,7 @@
 				<div v-else class="d-flex align-center flex-wrap mt-2" style="gap:8px">
 					<span class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.history_range') }}</span>
 					<range-picker v-model="rangeVal" />
+					<help-tip :title="ht('range_title')" :what="ht('range_what')" :why="ht('range_why')" :how="ht('range_how')" />
 					<span class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.history_kept_by_service', { days: serverHist.retention_days }) }}</span>
 				</div>
 			</v-card-text>
@@ -33,7 +34,7 @@
 			<v-col cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(levelCpu)">
 					<div class="d-flex align-center justify-space-between">
-						<span class="text-h6"><v-icon class="mr-1">mdi-cpu-64-bit</v-icon>CPU</span>
+						<span class="text-h6"><v-icon class="mr-1">mdi-cpu-64-bit</v-icon>CPU<help-tip :title="ht('cpu_title')" :what="ht('cpu_what')" :why="ht('cpu_why')" :how="ht('cpu_how')" /></span>
 						<v-chip small :color="color(levelCpu)" dark>{{ label(levelCpu) }}</v-chip>
 					</div>
 					<div class="text-h4 my-1">{{ fmt1(cpuPct) }} %</div>
@@ -49,7 +50,7 @@
 			<v-col cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(levelTemp)">
 					<div class="d-flex align-center justify-space-between">
-						<span class="text-h6"><v-icon class="mr-1">mdi-thermometer</v-icon>{{ $t('plugins.WorkshopPiHealth.health.temperature') }}</span>
+						<span class="text-h6"><v-icon class="mr-1">mdi-thermometer</v-icon>{{ $t('plugins.WorkshopPiHealth.health.temperature') }}<help-tip :title="ht('temp_title')" :what="ht('temp_what')" :why="ht('temp_why')" :how="ht('temp_how')" /></span>
 						<v-chip small :color="color(levelTemp)" dark>{{ label(levelTemp) }}</v-chip>
 					</div>
 					<div class="text-h4 my-1">{{ fmt1(temp) }} &deg;C</div>
@@ -65,7 +66,7 @@
 			<v-col cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(levelRam)">
 					<div class="d-flex align-center justify-space-between">
-						<span class="text-h6"><v-icon class="mr-1">mdi-memory</v-icon>{{ $t('plugins.WorkshopPiHealth.health.ram_memory') }}</span>
+						<span class="text-h6"><v-icon class="mr-1">mdi-memory</v-icon>{{ $t('plugins.WorkshopPiHealth.health.ram_memory') }}<help-tip :title="ht('ram_title')" :what="ht('ram_what')" :why="ht('ram_why')" :how="ht('ram_how')" /></span>
 						<v-chip small :color="color(levelRam)" dark>{{ label(levelRam) }}</v-chip>
 					</div>
 					<div class="text-h4 my-1">{{ fmt1(ramPct) }} %</div>
@@ -81,7 +82,7 @@
 			<v-col cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(levelDisk)">
 					<div class="d-flex align-center justify-space-between">
-						<span class="text-h6"><v-icon class="mr-1">mdi-micro-sd</v-icon>{{ $t('plugins.WorkshopPiHealth.health.storage') }}</span>
+						<span class="text-h6"><v-icon class="mr-1">mdi-micro-sd</v-icon>{{ $t('plugins.WorkshopPiHealth.health.storage') }}<help-tip :title="ht('disk_title')" :what="ht('disk_what')" :why="ht('disk_why')" :how="ht('disk_how')" /></span>
 						<v-chip small :color="color(levelDisk)" dark>{{ label(levelDisk) }}</v-chip>
 					</div>
 					<div v-for="v in disks" :key="v.path" class="mt-2">
@@ -111,21 +112,21 @@
 			<v-col cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(levelVolt)">
 					<div class="d-flex align-center justify-space-between">
-						<span class="text-h6"><v-icon class="mr-1">mdi-flash</v-icon>{{ $t('plugins.WorkshopPiHealth.health.power_and_performance') }}</span>
+						<span class="text-h6"><v-icon class="mr-1">mdi-flash</v-icon>{{ $t('plugins.WorkshopPiHealth.health.power_and_performance') }}<help-tip :title="ht('power_title')" :what="ht('power_what')" :why="ht('power_why')" :how="ht('power_how')" /></span>
 						<v-chip small :color="color(levelVolt)" dark>{{ label(levelVolt) }}</v-chip>
 					</div>
 					<v-simple-table dense class="mt-2">
 						<tbody>
-							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.undervoltage') }}</td><td>
+							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.undervoltage') }}<help-tip :title="ht('undervoltage_title')" :what="ht('undervoltage_what')" :why="ht('undervoltage_why')" :how="ht('undervoltage_how')" /></td><td>
 								<v-chip x-small :color="thr.low_voltage_now ? 'error' : 'success'" dark>{{ thr.low_voltage_now ? $t('plugins.WorkshopPiHealth.health.now_upper') : $t('plugins.WorkshopPiHealth.health.no') }}</v-chip>
 								<span class="grey--text ml-2">{{ $t('plugins.WorkshopPiHealth.health.since_boot') }} {{ thr.low_voltage_since_startup ? $t('plugins.WorkshopPiHealth.health.yes_there_was') : $t('plugins.WorkshopPiHealth.health.no') }}</span>
 							</td></tr>
-							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.throttled_by_heat') }}</td><td>
+							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.throttled_by_heat') }}<help-tip :title="ht('throttled_title')" :what="ht('throttled_what')" :why="ht('throttled_why')" :how="ht('throttled_how')" /></td><td>
 								<v-chip x-small :color="thr.limited_now || thr.limit_temp_now ? 'warning' : 'success'" dark>{{ thr.limited_now || thr.limit_temp_now ? $t('plugins.WorkshopPiHealth.health.now_upper') : $t('plugins.WorkshopPiHealth.health.no') }}</v-chip>
 								<span class="grey--text ml-2">{{ $t('plugins.WorkshopPiHealth.health.since_boot') }} {{ thr.limited_since_startup || thr.limit_temp_since_startup ? $t('plugins.WorkshopPiHealth.health.yes_there_was') : $t('plugins.WorkshopPiHealth.health.no') }}</span>
 							</td></tr>
 							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.cpu_speed') }}</td><td>{{ sp.cpu && sp.cpu.freq_mhz }} MHz</td></tr>
-							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.load_1_5_15_min') }}</td><td>{{ sp.cpu && sp.cpu.load ? sp.cpu.load.join(' / ') : '--' }} <span class="grey--text">{{ $t('plugins.WorkshopPiHealth.health.4_cores_4_all_busy') }}</span></td></tr>
+							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.load_1_5_15_min') }}<help-tip :title="ht('load_title')" :what="ht('load_what')" :why="ht('load_why')" :how="ht('load_how')" /></td><td>{{ sp.cpu && sp.cpu.load ? sp.cpu.load.join(' / ') : '--' }} <span class="grey--text">{{ $t('plugins.WorkshopPiHealth.health.4_cores_4_all_busy') }}</span></td></tr>
 							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.clock') }}</td><td>{{ sp.clock_synchronized ? $t('plugins.WorkshopPiHealth.health.synchronized_internet_time') : $t('plugins.WorkshopPiHealth.health.not_synchronized') }}</td></tr>
 							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.last_restart') }}</td><td>
 								{{ $t('plugins.WorkshopPiHealth.health.ago', { time: fmtUptime(sp.uptime_s) }) }}
@@ -143,7 +144,7 @@
 			<v-col cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(levelWifi)">
 					<div class="d-flex align-center justify-space-between">
-						<span class="text-h6"><v-icon class="mr-1">mdi-wifi</v-icon>{{ $t('plugins.WorkshopPiHealth.health.network_wifi') }}</span>
+						<span class="text-h6"><v-icon class="mr-1">mdi-wifi</v-icon>{{ $t('plugins.WorkshopPiHealth.health.network_wifi') }}<help-tip :title="ht('wifi_title')" :what="ht('wifi_what')" :why="ht('wifi_why')" :how="ht('wifi_how')" /></span>
 						<v-chip small :color="color(levelWifi)" dark>{{ label(levelWifi) }}</v-chip>
 					</div>
 					<div class="my-1">
@@ -167,7 +168,7 @@
 			<v-col cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(levelServ)">
 					<div class="d-flex align-center justify-space-between">
-						<span class="text-h6"><v-icon class="mr-1">mdi-cogs</v-icon>{{ $t('plugins.WorkshopPiHealth.health.services') }}</span>
+						<span class="text-h6"><v-icon class="mr-1">mdi-cogs</v-icon>{{ $t('plugins.WorkshopPiHealth.health.services') }}<help-tip :title="ht('services_title')" :what="ht('services_what')" :why="ht('services_why')" :how="ht('services_how')" /></span>
 						<v-chip small :color="color(levelServ)" dark>{{ label(levelServ) }}</v-chip>
 					</div>
 					<v-simple-table dense class="mt-2">
@@ -179,7 +180,7 @@
 							</tr>
 							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.kiosk_screen') }}</td><td><v-chip x-small :color="sp.kiosk ? 'success' : 'warning'" dark>{{ sp.kiosk ? $t('plugins.WorkshopPiHealth.health.open_f') : $t('plugins.WorkshopPiHealth.health.closed_f') }}</v-chip></td><td></td></tr>
 							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.camera_port_8090') }}</td><td><v-chip x-small :color="sp.red && sp.red.camera ? 'success' : 'warning'" dark>{{ sp.red && sp.red.camera ? $t('plugins.WorkshopPiHealth.health.answers') : $t('plugins.WorkshopPiHealth.health.not_responding') }}</v-chip></td><td></td></tr>
-							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.gcode_bridge_telnet') }}</td><td>{{ sp.bridge_clients == null ? '--' : (sp.bridge_clients ? $t('plugins.WorkshopPiHealth.health.n_programs_connected', { n: sp.bridge_clients }) : $t('plugins.WorkshopPiHealth.health.nobody_connected')) }}<div v-if="sp.bridge_programs && sp.bridge_programs.length" class="text-caption grey--text">{{ sp.bridge_programs.join(', ') }}</div></td><td class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.bridge_name_hint') }}</td></tr>
+							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.gcode_bridge_telnet') }}<help-tip :title="ht('bridge_title')" :what="ht('bridge_what')" :why="ht('bridge_why')" :how="ht('bridge_how')" /></td><td>{{ sp.bridge_clients == null ? '--' : (sp.bridge_clients ? $t('plugins.WorkshopPiHealth.health.n_programs_connected', { n: sp.bridge_clients }) : $t('plugins.WorkshopPiHealth.health.nobody_connected')) }}<div v-if="sp.bridge_programs && sp.bridge_programs.length" class="text-caption grey--text">{{ sp.bridge_programs.join(', ') }}</div></td><td class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.bridge_name_hint') }}</td></tr>
 							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.motor_data') }}</td><td>{{ sp.data && sp.data.motors_s != null ? $t('plugins.WorkshopPiHealth.health.s_ago', { n: sp.data.motors_s }) : '--' }}</td><td></td></tr>
 						</tbody>
 					</v-simple-table>
@@ -189,14 +190,14 @@
 			<!-- Duet + pantallas -->
 			<v-col cols="12" md="6">
 				<v-card outlined class="pa-3">
-					<span class="text-h6"><v-icon class="mr-1">mdi-chip</v-icon>{{ $t('plugins.WorkshopPiHealth.health.duet_and_screens') }}</span>
+					<span class="text-h6"><v-icon class="mr-1">mdi-chip</v-icon>{{ $t('plugins.WorkshopPiHealth.health.duet_and_screens') }}<help-tip :title="ht('duet_title')" :what="ht('duet_what')" :why="ht('duet_why')" :how="ht('duet_how')" /></span>
 					<v-simple-table dense class="mt-2">
 						<tbody>
 							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.status') }}</td><td>{{ duet.state }} &middot; firmware {{ duet.firmware }}</td></tr>
 							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.main_board') }}</td><td>{{ fmt1(duet.mcu_temp_c) }} &deg;C &middot; {{ fmt1(duet.vin_v) }} V</td></tr>
 							<tr v-for="p in (duet.boards || [])" :key="'p' + p.can"><td>{{ p.name }} <span class="grey--text">(CAN {{ p.can }})</span></td><td>{{ p.state === 'unknown' && p.can === 0 ? $t('plugins.WorkshopPiHealth.health.main') : p.state }}</td></tr>
-							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.system_duet_retries_1_h') }}</td><td>{{ sp.reenvios_1h == null ? $t('plugins.WorkshopPiHealth.health.no_permission_to_read_the_log') : sp.reenvios_1h }}</td></tr>
-							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.devices_with_dwc_open') }}</td><td>
+							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.system_duet_retries_1_h') }}<help-tip :title="ht('retries_title')" :what="ht('retries_what')" :why="ht('retries_why')" :how="ht('retries_how')" /></td><td>{{ sp.reenvios_1h == null ? $t('plugins.WorkshopPiHealth.health.no_permission_to_read_the_log') : sp.reenvios_1h }}</td></tr>
+							<tr><td>{{ $t('plugins.WorkshopPiHealth.health.devices_with_dwc_open') }}<help-tip :title="ht('devices_title')" :what="ht('devices_what')" :why="ht('devices_why')" :how="ht('devices_how')" /></td><td>
 								{{ (screen.devices || []).length }}:
 								<span v-for="(e, i) in (screen.devices || [])" :key="e.origin">{{ i ? ', ' : '' }}{{ e.origin }}<span v-if="e.sessions > 1" class="grey--text"> {{ $t('plugins.WorkshopPiHealth.health.n_sessions_paren', { n: e.sessions }) }}</span></span>
 								<div class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.each_dwc_load_or_reload_opens') }}</div>
@@ -215,7 +216,7 @@
 			<v-col v-if="base" cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(base.check === 'ok' ? 0 : 2)">
 					<div class="d-flex align-center flex-wrap">
-						<span class="text-h6 mr-2"><v-icon class="mr-1">mdi-database</v-icon>{{ $t('plugins.WorkshopPiHealth.health.database') }}</span>
+						<span class="text-h6 mr-2"><v-icon class="mr-1">mdi-database</v-icon>{{ $t('plugins.WorkshopPiHealth.health.database') }}<help-tip :title="ht('database_title')" :what="ht('database_what')" :why="ht('database_why')" :how="ht('database_how')" /></span>
 						<v-chip x-small dark :color="base.error ? 'grey' : (base.check === 'ok' ? 'success' : 'warning')">
 							{{ base.error ? $t('plugins.WorkshopPiHealth.health.no_data') : (base.check === 'ok' ? $t('plugins.WorkshopPiHealth.health.healthy') : $t('plugins.WorkshopPiHealth.health.check')) }}
 						</v-chip>
@@ -250,7 +251,8 @@
 							<v-icon x-small>mdi-file-outline</v-icon> <code>{{ base.file }}</code>
 						</div>
 						<!-- backups (2026-10-11, request: "improve the database information in Health") -->
-						<div v-if="resp && !resp.error" class="d-flex flex-wrap mt-2" style="gap:6px 18px">
+						<div v-if="resp && !resp.error" class="d-flex flex-wrap align-center mt-2" style="gap:6px 18px">
+							<help-tip :title="ht('backups_title')" :what="ht('backups_what')" :why="ht('backups_why')" :how="ht('backups_how')" />
 							<div><div class="text-h6 text-no-wrap">{{ resp.last ? date(resp.last.date) : '--' }}</div><div class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.last_backup') }}<template v-if="resp.last"> ({{ resp.last.mb }} MB)</template></div></div>
 							<div><div class="text-h6 text-no-wrap">{{ !resp.active ? $t('plugins.WorkshopPiHealth.health.off') : (resp.next ? dateTs(resp.next) : $t('plugins.WorkshopPiHealth.health.soon')) }}</div><div class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.next_backup') }}</div></div>
 							<div><div class="text-h6">{{ resp.amount || 0 }}</div><div class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.backups_stored_mb', { mb: resp.mb_total || 0 }) }}</div></div>
@@ -278,7 +280,7 @@
 			<v-col cols="12">
 				<v-card outlined class="pa-3">
 					<div class="d-flex align-center flex-wrap">
-						<span class="text-h6 mr-3"><v-icon class="mr-1">mdi-bell-ring</v-icon>{{ $t('plugins.WorkshopPiHealth.health.phone_alerts') }}</span>
+						<span class="text-h6 mr-3"><v-icon class="mr-1">mdi-bell-ring</v-icon>{{ $t('plugins.WorkshopPiHealth.health.phone_alerts') }}<help-tip :title="ht('alerts_title')" :what="ht('alerts_what')" :why="ht('alerts_why')" :how="ht('alerts_how')" /></span>
 						<v-chip x-small :color="notice.active ? 'success' : 'grey'" dark class="mr-1">{{ notice.active ? $t('plugins.WorkshopPiHealth.health.notifications_on') : $t('plugins.WorkshopPiHealth.health.notifications_off') }}</v-chip>
 						<v-chip v-if="noticeMuted" x-small color="warning" text-color="black">{{ $t('plugins.WorkshopPiHealth.health.muted_for_a_while') }}</v-chip>
 					</div>
@@ -321,6 +323,7 @@ import { isRefusal } from './session-note.js'
 import { refusalNow } from './session-now.js' // a refusal told by its cause
 import { mergeAll, historyArgs, endsNow } from './health-history.js' // history kept by the service + live samples
 import RangePicker from './RangePicker.vue' // vue/_shared36
+import HelpTip from './HelpTip.vue' // vue/_shared36
 import { relative, resolve, asEpoch } from './range-picker.js' // vue/_shared36
 
 // Thresholds [alert, limit]. Temperature: the Pi 4 lowers the CPU
@@ -433,7 +436,7 @@ start();
 
 export default {
 	mixins: [roleMixin],
-	components: { PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
+	components: { HelpTip, PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
 	data() {
 		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, historyError: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false };
 	},
@@ -594,6 +597,9 @@ export default {
 		}
 	},
 	methods: {
+		ht(k) {
+			return this.$t('plugins.WorkshopPiHealth.health.help_' + k)
+		},
 		// the person signed in / out or the role changed: the history is read again
 		onSessionChange() {
 			this.loadHistory();

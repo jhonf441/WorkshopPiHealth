@@ -1,5 +1,9 @@
 # WorkshopPiHealth -- historial de versiones
 
+## 2.4.15 -- 2026-11-05
+
+- Sign out no longer reopens the PIN dialog
+
 ## 2.4.14 -- 2026-11-04
 
 - Rebuilt with the readable text colours, the shared start-up card and the session notice
