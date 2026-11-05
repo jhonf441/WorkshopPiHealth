@@ -18,6 +18,7 @@
 				</div>
 				<div v-if="!serverHist" class="text-caption grey--text">
 					{{ $t('plugins.WorkshopPiHealth.health.history_this_browser') }}
+					<span v-if="historyRefusal" class="lock-reason"><v-icon x-small left>mdi-lock-outline</v-icon>{{ historyRefusal }}</span>
 				</div>
 				<div v-else class="d-flex align-center flex-wrap mt-2" style="gap:8px">
 					<span class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.history_range') }}</span>
@@ -279,7 +280,7 @@
 					<div class="d-flex align-center flex-wrap">
 						<span class="text-h6 mr-3"><v-icon class="mr-1">mdi-bell-ring</v-icon>{{ $t('plugins.WorkshopPiHealth.health.phone_alerts') }}</span>
 						<v-chip x-small :color="notice.active ? 'success' : 'grey'" dark class="mr-1">{{ notice.active ? $t('plugins.WorkshopPiHealth.health.notifications_on') : $t('plugins.WorkshopPiHealth.health.notifications_off') }}</v-chip>
-						<v-chip v-if="noticeMuted" x-small color="warning" dark>{{ $t('plugins.WorkshopPiHealth.health.muted_for_a_while') }}</v-chip>
+						<v-chip v-if="noticeMuted" x-small color="warning" text-color="black">{{ $t('plugins.WorkshopPiHealth.health.muted_for_a_while') }}</v-chip>
 					</div>
 					<div class="text-caption grey--text mb-1">
 						{{ $t(hasActivity ? 'plugins.WorkshopPiHealth.health.every_alert_is_also_logged_in' : 'plugins.WorkshopPiHealth.health.every_alert_is_also_logged_in_no_activity') }}
@@ -290,7 +291,7 @@
 							<div class="text-caption grey--text ml-12">{{ a.detail(threshold) }}</div>
 						</v-col>
 					</v-row>
-					<div v-if="!atLeast('technician')" class="text-caption grey--text mt-1">{{ $t('plugins.WorkshopPiHealth.health.alerts_read_only') }}</div>
+					<div v-if="!atLeast('technician')" class="text-caption grey--text mt-1 lock-reason"><v-icon x-small left>mdi-lock-outline</v-icon>{{ lockText('technician') }}</div>
 					<error-notice :error="errorAlert" class="mt-1" />
 				</v-card>
 			</v-col>
@@ -316,6 +317,8 @@ import { pluginOf, pathExists } from './workshop-ids.js' // Id nuevo o viejo del
 import { serviceTexts } from './service-text.js'
 import ErrorNotice from './ErrorNotice.vue' // vue/_shared
 import { roleMixin } from './role-mixin.js' // what the role may do (vue/_shared)
+import { isRefusal } from './session-note.js'
+import { refusalNow } from './session-now.js' // a refusal told by its cause
 import { mergeAll, historyArgs, endsNow } from './health-history.js' // history kept by the service + live samples
 import RangePicker from './RangePicker.vue' // vue/_shared36
 import { relative, resolve, asEpoch } from './range-picker.js' // vue/_shared36
@@ -432,9 +435,14 @@ export default {
 	mixins: [roleMixin],
 	components: { PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
 	data() {
-		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false };
+		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, historyError: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false };
 	},
 	computed: {
+		// the history of the service was refused: why (no session / role), so "this browser only" is not left without a cause
+		historyRefusal() {
+			void this.identityTick;
+			return refusalNow(this.historyError, 'viewer');
+		},
 		// what the charts draw: the history of the service (health.history) joined with this browser's live samples; with an old service
 		// (no health.history) only the live samples, as before
 		S() {
@@ -586,12 +594,18 @@ export default {
 		}
 	},
 	methods: {
+		// the person signed in / out or the role changed: the history is read again
+		onSessionChange() {
+			this.loadHistory();
+		},
 		// health.history: an old service answers unknown_op (or refuses the call): then nothing changes, the charts are the live ones
 		async loadHistory() {
 			try {
 				const r = await api('health.history', historyArgs(asEpoch(resolve(this.rangeVal, new Date())), 300));
 				this.serverHist = r && r.series ? r : null;
+				this.historyError = null;
 			} catch (e) {
+				this.historyError = isRefusal(e) ? e : null;
 				if (!this.serverHist || (e && e.code === 'unknown_op')) this.serverHist = null;
 			}
 		},
