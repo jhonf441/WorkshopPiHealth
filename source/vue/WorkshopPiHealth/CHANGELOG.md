@@ -1,5 +1,9 @@
 # WorkshopPiHealth -- historial de versiones
 
+## 2.4.19 -- 2026-11-05
+
+- Shared family.css: subsection spacing, color input, touch help geometry
+
 ## 2.4.18 -- 2026-11-05
 
 - Session state, refusals and notices unified; errors kept as objects; 403 names the action
