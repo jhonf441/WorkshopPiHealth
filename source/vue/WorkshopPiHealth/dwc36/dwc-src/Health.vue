@@ -20,7 +20,7 @@
 					{{ $t('plugins.WorkshopPiHealth.health.history_this_browser') }}
 				</div>
 				<lock-reason v-if="!serverHist && historyKind" :kind="historyKind" :text="historyKind === 'role' ? historyRefusal : ''" class="mt-1" />
-				<div v-else class="d-flex align-center flex-wrap mt-2" style="gap:8px">
+				<div v-if="serverHist" class="d-flex align-center flex-wrap mt-2" style="gap:8px">
 					<span class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.history_range') }}</span>
 					<range-picker v-model="rangeVal" />
 					<help-tip :title="ht('range_title')" :what="ht('range_what')" :why="ht('range_why')" :how="ht('range_how')" />

@@ -1,5 +1,11 @@
 # WorkshopPiHealth (System health)
 
+<!-- notice:start -->
+> **Read before installing.** This plugin runs with real permissions on your machine. Read [SECURITY.md](SECURITY.md) and the section **Permissions and what it changes** below: they say what it can do, which files it writes, and what it sends outside your network (nothing, unless you turn a feature on).
+
+> **The Workshop users and roles do not protect DWC itself.** Anyone who can open DWC on your network can send G-code, move the machine, edit `config.g` and upload files, whatever the Workshop roles say: Duet has no roles of its own. Set a DWC password (`M551`) and keep the machine on a network you trust.
+<!-- notice:end -->
+
 
 
 Page `/Plugins/PiHealth` ("System health"). How the workshop computer (the Raspberry Pi) is doing: CPU, temperature, RAM, storage, power and throttling, network / WiFi, services (DCS, DWS, DPS, G-code bridge, kiosk, camera), Duet and screens, the database and phone alerts. It uses data DSF already publishes (it adds no load). The service stores the history for 7 days (table `health_samples`), also for phones and new tabs; the last minutes are live.
