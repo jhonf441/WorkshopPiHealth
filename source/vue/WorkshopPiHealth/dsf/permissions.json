@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "plugin": "WorkshopPiHealth",
+  "namespace": "pihealth",
+  "prefixes": [
+    "health"
+  ],
+  "ui": "ui:pihealth:open",
+  "operations": [
+    "health.history",
+    "notifications.type",
+    "view.heartbeat"
+  ],
+  "shared": [
+    "notifications.type",
+    "view.heartbeat"
+  ],
+  "restricted": [],
+  "targets": [],
+  "profiles": {
+    "readonly": {
+      "title": "PiHealthReadOnly",
+      "capabilities": [
+        "system.view"
+      ]
+    },
+    "operator": {
+      "title": "PiHealthOperator",
+      "capabilities": [
+        "system.view"
+      ]
+    },
+    "admin": {
+      "title": "PiHealthAdmin",
+      "capabilities": [
+        "activity.settings",
+        "system.view"
+      ]
+    }
+  }
+}
