@@ -19,7 +19,7 @@
 				<div v-if="!serverHist" class="text-caption grey--text">
 					{{ $t('plugins.WorkshopPiHealth.health.history_this_browser') }}
 				</div>
-				<lock-reason v-if="!serverHist && historyKind" :kind="historyKind" :text="historyKind === 'role' ? historyRefusal : ''" class="mt-1" />
+				<lock-reason v-if="!serverHist && historyKind" :kind="historyKind" :text="historyKind === 'role' ? historyRefusal : ''" class="mt-1" :subject="$t('plugins.WorkshopPiHealth.subjects.history')" />
 				<div v-if="serverHist" class="d-flex align-center flex-wrap mt-2" style="gap:8px">
 					<span class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.history_range') }}</span>
 					<range-picker v-model="rangeVal" />
@@ -216,19 +216,16 @@
 			<v-col v-if="base" cols="12" md="6">
 				<v-card outlined class="pa-3" :style="edge(base.check === 'ok' ? 0 : 2)">
 					<div class="d-flex align-center flex-wrap">
-						<span class="text-h6 mr-2"><v-icon class="mr-1">mdi-database</v-icon>{{ $t('plugins.WorkshopPiHealth.health.database') }}<help-tip :title="ht('database_title')" :what="ht('database_what')" :why="ht('database_why')" :how="ht('database_how')" /></span>
+						<span class="text-h6 mr-2"><v-icon class="mr-1">mdi-database</v-icon>{{ $t('plugins.WorkshopPiHealth.health.database') }}</span>
 						<v-chip x-small dark :color="base.error ? 'grey' : (base.check === 'ok' ? 'success' : 'warning')">
 							{{ base.error ? $t('plugins.WorkshopPiHealth.health.no_data') : (base.check === 'ok' ? $t('plugins.WorkshopPiHealth.health.healthy') : $t('plugins.WorkshopPiHealth.health.check')) }}
 						</v-chip>
 						<v-chip v-if="base.backup" x-small dark class="ml-1" :color="respState.color">{{ respState.text }}</v-chip>
 						<v-spacer />
-						<v-btn v-if="hasService" x-small outlined @click="configureBase"><v-icon x-small left>mdi-cog-outline</v-icon>{{ $t('plugins.WorkshopPiHealth.health.configure_in_services') }}</v-btn>
+						<v-btn v-if="hasService" x-small outlined @click="seeDetail"><v-icon x-small left>mdi-open-in-new</v-icon>{{ $t('plugins.WorkshopPiHealth.health.see_detail') }}</v-btn>
 					</div>
 					<div v-if="base.error" class="text-caption warning--text mt-1">{{ $t('plugins.WorkshopPiHealth.health.could_not_read', { error: base.error }) }}</div>
 					<template v-else>
-						<div class="text-caption grey--text">
-							{{ $t('plugins.WorkshopPiHealth.health.database_hint') }}
-						</div>
 						<div class="d-flex flex-wrap mt-2" style="gap:6px 18px">
 							<div><div class="text-h6">{{ base.mb }} MB</div><div class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.size') }}<template v-if="base.wal_mb"> {{ $t('plugins.WorkshopPiHealth.health.wal_mb_in_progress', { mb: base.wal_mb }) }}</template></div></div>
 							<div><div class="text-h6">{{ rowsTotal }}</div><div class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.rows_stored') }}</div></div>
@@ -236,17 +233,6 @@
 							<div><div class="text-h6 text-no-wrap">{{ hour(base.modified) }}</div><div class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.last_write') }}</div></div>
 							<div v-if="disk"><div class="text-h6" :class="disk.free_gb < 2 ? 'warning--text' : ''">{{ disk.free_gb }} GB</div><div class="text-caption grey--text">{{ $t('plugins.WorkshopPiHealth.health.free_on_system_card', { pct: disk.free_pct }) }}</div></div>
 						</div>
-						<v-simple-table dense class="mt-2">
-							<thead><tr><th>{{ $t('plugins.WorkshopPiHealth.health.what_it_stores') }}</th><th class="text-right">{{ $t('plugins.WorkshopPiHealth.health.rows') }}</th><th>{{ $t('plugins.WorkshopPiHealth.health.from') }}</th><th>{{ $t('plugins.WorkshopPiHealth.health.to') }}</th></tr></thead>
-							<tbody>
-								<tr v-for="tb in tablesVisible" :key="tb.name">
-									<td>{{ nameTable(tb.name) }} <span class="grey--text text-caption">({{ tb.name }})</span></td>
-									<td class="text-right">{{ tb.rows }}</td>
-									<td class="text-no-wrap">{{ date(tb.since) }}</td>
-									<td class="text-no-wrap">{{ date(tb.until) }}</td>
-								</tr>
-							</tbody>
-						</v-simple-table>
 						<div class="text-caption mt-2">
 							<v-icon x-small>mdi-file-outline</v-icon> <code>{{ base.file }}</code>
 						</div>
@@ -289,11 +275,11 @@
 					</div>
 					<v-row dense>
 						<v-col v-for="a in ALERTS" :key="a.kind" cols="12" sm="6" md="4">
-							<v-switch dense hide-details class="mt-1" :input-value="!!noticeKinds[a.kind]" :loading="changing === a.kind" :disabled="!atLeast('technician')" :label="a.label" @change="v => changeAlert(a.kind, v)" />
+							<v-switch dense hide-details class="mt-1" :input-value="!!noticeKinds[a.kind]" :loading="changing === a.kind" :disabled="!alertsAllowed" :label="a.label" @change="v => changeAlert(a.kind, v)" />
 							<div class="text-caption grey--text ml-12">{{ a.detail(threshold) }}</div>
 						</v-col>
 					</v-row>
-					<lock-reason min="technician" class="mt-1" />
+					<lock-reason :ops="alertOps" min="technician" :subject="$t('plugins.WorkshopPiHealth.health.phone_alerts')" class="mt-1" />
 					<error-notice :error="errorAlert" class="mt-1" />
 				</v-card>
 			</v-col>
@@ -318,7 +304,8 @@ import DetailChart from './DetailChart.vue'
 import { pluginOf, pathExists } from './workshop-ids.js' // Id nuevo o viejo del plugin
 import { serviceTexts } from './service-text.js'
 import ErrorNotice from './ErrorNotice.vue' // vue/_shared
-import { roleMixin } from './role-mixin.js' // what the role may do (vue/_shared)
+import { accessCanMixin } from './reason-mixin.js' // the answers of the service, by operation; includes what the role may do (vue/_shared36)
+import { ALERT_OPS, SCREEN_OPS, groupAllowed } from './access-groups.js'
 import { isRefusal, refusalNow, refusalCauseNow } from './session-refusal.js' // a refusal told by its cause: isRefusal, refusalNow, refusalCauseNow
 import { mergeAll, historyArgs, endsNow } from './health-history.js' // history kept by the service + live samples
 import RangePicker from './RangePicker.vue' // vue/_shared36
@@ -435,15 +422,19 @@ function start() {
 start();
 
 export default {
-	mixins: [roleMixin],
+	mixins: [accessCanMixin],
 	// what the previous person read stays in no data of the page (ESTANDAR 3.1); onSessionChange reads the history again
 	sessionData: ['serverHist', 'historyError', 'errorAlert', 'changing'],
 	sessionErrors: ['historyError', 'errorAlert'], // what a refusal or a failure said: cleared when the person signs in, out or changes role (role-mixin.js)
 	components: { LockReason, HelpTip, PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
 	data() {
-		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, historyError: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false };
+		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, historyError: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false, alertOps: ALERT_OPS };
 	},
 	computed: {
+		// the switches of the health alerts: the answer of the service (the table of the role until it answers)
+		alertsAllowed() {
+			return groupAllowed(ALERT_OPS, op => this.canDo(op));
+		},
 		// the history of the service was refused: why (no session / role), so "this browser only" is not left without a cause
 		// the cause of that refusal, to draw it as the calm note of its cause
 		historyKind() {
@@ -514,7 +505,6 @@ export default {
 			return { text: i18n.t('plugins.WorkshopPiHealth.health.backups_on'), color: 'success' };
 		},
 		// the presets table is no longer used: it stays in the database but is not shown
-		tablesVisible() { return ((this.base && this.base.tables) || []).filter(x => x.name !== 'presets'); },
 		rowsRare() { return ((this.base && this.base.tables) || []).reduce((s, x) => s + (x.date_odd || 0), 0); },
 		rowsTotal() { return ((this.base && this.base.tables) || []).reduce((s, x) => s + (x.rows || 0), 0); },
 		threshold() { return (this.sp && this.sp.thresholds) || {}; },
@@ -586,6 +576,10 @@ export default {
 			return this.levelOf(root ? root.pct : null, threshold.disk);
 		}
 	},
+	created() {
+		// ONE call to auth.can for every group of the page (the reasons ask the same cache)
+		this.wantCan(SCREEN_OPS);
+	},
 	mounted() {
 		// Heartbeat (DCS load, 2026-10-12): WorkshopService reads the health and services data at full speed only while this page is
 		// visible; without a heartbeat for 30 s it slows down (dsf/viewers.py). Same pattern as the
@@ -627,9 +621,6 @@ export default {
 			if (document.hidden || !this.$el || this.$el.isConnected === false) return;
 			api('view.heartbeat', { topic: 'health' }).catch(() => {});
 		},
-		nameTable(n) {
-			return ({ activity: i18n.t('plugins.WorkshopPiHealth.health.activity_jobs_modes_alerts'), consumption: i18n.t('plugins.WorkshopPiHealth.health.energy_meter_readings'), commands: i18n.t('plugins.WorkshopPiHealth.health.received_commands') })[n] || n;
-		},
 		// "2026-10-10T22:51:03" -> "10/10 22:51"
 		date(ts) {
 			const s = String(ts || '');
@@ -659,9 +650,9 @@ export default {
 			}
 			this.changing = null;
 		},
-		// Configuration lives only in the Services page (card svc-base)
-		configureBase() {
-			this.$router.push({ path: '/Plugins/WorkshopService', query: { anchor: 'svc-base' } }).catch(() => {});
+		// the table of what the database stores and its settings live in Service > Data and copies > Database (?s=data&t=db)
+		seeDetail() {
+			this.$router.push({ path: '/Plugins/WorkshopService', query: { s: 'data', t: 'db' } }).catch(() => {});
 		},
 		levelOf(v, u) {
 			if (v == null || !isFinite(v)) {

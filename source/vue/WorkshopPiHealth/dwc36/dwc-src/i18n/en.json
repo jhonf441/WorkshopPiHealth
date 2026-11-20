@@ -1,4 +1,7 @@
 {
+	"subjects": {
+		"history": "History"
+	},
 	"common": {
 		"lead": "How the workshop computer is doing: processor, temperature, memory, storage, power and network.",
 		"system_health": "System health",
@@ -6,9 +9,6 @@
 	},
 	"health": {
 		"no_data": "no data",
-		"received_commands": "Received commands",
-		"energy_meter_readings": "Energy meter readings",
-		"activity_jobs_modes_alerts": "Activity (jobs, modes, alerts)",
 		"alerts_ntfy": "alerts (ntfy)",
 		"tuya_meter": "Tuya meter",
 		"backups_on": "backups on",
@@ -32,15 +32,10 @@
 		"soon": "soon",
 		"off": "off",
 		"last_backup": "last backup",
-		"to": "To",
-		"from": "From",
-		"rows": "Rows",
-		"what_it_stores": "What it stores",
 		"last_write": "last write",
 		"unused_space_inside": "unused space inside",
 		"rows_stored": "rows stored",
 		"size": "size",
-		"configure_in_services": "Configure in Services",
 		"check": "check",
 		"healthy": "healthy",
 		"database": "Database",
@@ -112,7 +107,6 @@
 		"duet_and_screens": "Duet and screens",
 		"n_sessions_paren": "({n} sessions)",
 		"could_not_read": "Could not read: {error}",
-		"database_hint": "The one of the System service (SQLite, a single file): activity, power usage and received commands. Checked every 5 minutes. The size is the size of the database file, not of the disk; \"unused space inside\" is room the database reuses by itself.",
 		"wal_mb_in_progress": "(+{mb} MB in progress)",
 		"free_on_system_card": "free on the system card ({pct} %)",
 		"backups_stored_mb": "backups stored ({mb} MB)",
@@ -176,10 +170,6 @@
 		"help_duet_what": "State and firmware of the Duet main board, its temperature and input voltage, the expansion boards on CAN, the Duet command retries of the last hour and the devices that have DWC open.",
 		"help_duet_why": "Shows the health of the controller and how many screens are loading the machine with status requests.",
 		"help_duet_how": "Retries and requests come from the system log; if they show no permission, give the dsf user the systemd-journal group as the note says.",
-		"help_database_title": "Database",
-		"help_database_what": "State of the SQLite file of the System service: its size, rows stored per table, unused space inside, last write, free space of the card and the backup schedule.",
-		"help_database_why": "It is where activity, power usage and received commands are stored; a damaged or full database loses history.",
-		"help_database_how": "It is checked every 5 minutes. \"Check\" in orange means the integrity test did not return ok. Configure the backups from the button.",
 		"help_alerts_title": "Phone alerts",
 		"help_alerts_what": "Notifications sent to your phone when a health measure crosses its alert or limit threshold. Each switch enables one kind of alert.",
 		"help_alerts_why": "To be warned of an overheating, a full card or a stopped service without watching this page.",
@@ -215,7 +205,8 @@
 		"help_backups_title": "Database backups",
 		"help_backups_what": "Last backup and its size, when the next one runs, how many are stored and how many daily and weekly ones are kept, and the free space where they are saved.",
 		"help_backups_why": "A backup on another drive is what saves the history if the card fails.",
-		"help_backups_how": "If it says the database and its backups are on the same card, point the backups to a USB drive."
+		"help_backups_how": "If it says the database and its backups are on the same card, point the backups to a USB drive.",
+		"see_detail": "See the detail in Service > Data and copies > Database"
 	},
 	"startup": {
 		"title": "Start-up",

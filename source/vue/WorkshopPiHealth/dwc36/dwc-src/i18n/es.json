@@ -1,4 +1,7 @@
 {
+	"subjects": {
+		"history": "Historial"
+	},
 	"common": {
 		"lead": "Cómo está el equipo del taller: procesador, temperatura, memoria, almacenamiento, alimentación y red.",
 		"system_health": "Salud del sistema",
@@ -6,9 +9,6 @@
 	},
 	"health": {
 		"no_data": "sin datos",
-		"received_commands": "Comandos recibidos",
-		"energy_meter_readings": "Lecturas del medidor de energía",
-		"activity_jobs_modes_alerts": "Actividad (trabajos, modos, avisos)",
 		"alerts_ntfy": "avisos (ntfy)",
 		"tuya_meter": "medidor Tuya",
 		"backups_on": "respaldos activos",
@@ -32,15 +32,10 @@
 		"soon": "pronto",
 		"off": "apagado",
 		"last_backup": "último respaldo",
-		"to": "Hasta",
-		"from": "Desde",
-		"rows": "Filas",
-		"what_it_stores": "Qué guarda",
 		"last_write": "última escritura",
 		"unused_space_inside": "espacio sin usar adentro",
 		"rows_stored": "filas guardadas",
 		"size": "tamaño",
-		"configure_in_services": "Configurar en Servicios",
 		"check": "revisar",
 		"healthy": "sana",
 		"database": "Base de datos",
@@ -112,7 +107,6 @@
 		"duet_and_screens": "Duet y pantallas",
 		"n_sessions_paren": "({n} sesiones)",
 		"could_not_read": "No se pudo leer: {error}",
-		"database_hint": "La del Servicio del sistema (SQLite, un solo archivo): actividad, consumo y comandos recibidos. Se revisa cada 5 minutos. El tamaño es el del archivo de la base, no el del disco; \"sin usar adentro\" es lugar que la base vuelve a usar sola.",
 		"wal_mb_in_progress": "(+{mb} MB en curso)",
 		"free_on_system_card": "libres en la tarjeta del sistema ({pct} %)",
 		"backups_stored_mb": "respaldos guardados ({mb} MB)",
@@ -176,10 +170,6 @@
 		"help_duet_what": "Estado y firmware de la placa principal Duet, su temperatura y tensión de entrada, las placas de expansión por CAN, los reintentos de comandos al Duet en la última hora y los dispositivos que tienen DWC abierto.",
 		"help_duet_why": "Muestra la salud del controlador y cuántas pantallas cargan la máquina con peticiones de estado.",
 		"help_duet_how": "Los reintentos y las peticiones salen del registro del sistema; si dicen sin permiso, da al usuario dsf el grupo systemd-journal como indica la nota.",
-		"help_database_title": "Base de datos",
-		"help_database_what": "Estado del archivo SQLite del servicio del Sistema: su tamaño, las filas guardadas por tabla, el espacio sin usar dentro, la última escritura, el espacio libre de la tarjeta y el calendario de copias.",
-		"help_database_why": "Ahí se guardan la actividad, el consumo y los comandos recibidos; una base dañada o llena pierde historial.",
-		"help_database_how": "Se revisa cada 5 minutos. \"Revisar\" en naranja significa que la prueba de integridad no devolvió ok. Configura las copias con el botón.",
 		"help_alerts_title": "Alertas al teléfono",
 		"help_alerts_what": "Notificaciones enviadas a tu teléfono cuando una medida de salud cruza su umbral de alerta o de límite. Cada interruptor activa un tipo de alerta.",
 		"help_alerts_why": "Para enterarte de un sobrecalentamiento, una tarjeta llena o un servicio detenido sin mirar esta página.",
@@ -215,7 +205,8 @@
 		"help_backups_title": "Copias de la base de datos",
 		"help_backups_what": "La última copia y su tamaño, cuándo se hará la siguiente, cuántas hay guardadas y cuántas diarias y semanales se conservan, y el espacio libre donde se guardan.",
 		"help_backups_why": "Una copia en otra unidad es lo que salva el historial si falla la tarjeta.",
-		"help_backups_how": "Si dice que la base y sus copias están en la misma tarjeta, apunta las copias a una unidad USB."
+		"help_backups_how": "Si dice que la base y sus copias están en la misma tarjeta, apunta las copias a una unidad USB.",
+		"see_detail": "Ver el detalle en Servicio > Datos y copias > Base de datos"
 	},
 	"startup": {
 		"title": "Puesta en marcha",
