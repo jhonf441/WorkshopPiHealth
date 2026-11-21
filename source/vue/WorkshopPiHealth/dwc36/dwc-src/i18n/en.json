@@ -340,7 +340,6 @@
 		"since": "How far back",
 		"level": "Level",
 		"search": "Search text",
-		"kernel": "Kernel (system messages)",
 		"since_15min": "Last 15 minutes",
 		"since_1h": "Last hour",
 		"since_6h": "Last 6 hours",
@@ -358,8 +357,33 @@
 		"empty": "No lines in that period with that filter.",
 		"press_refresh": "Pick a log and press Refresh.",
 		"help_title": "System log",
-		"help_what": "The messages the Pi's programs write about themselves: Duet's control server, its web server, the G-code bridge, the network and the kernel. Read-only.",
+		"help_what": "The messages the Pi's programs write about themselves: Duet's control server, its web server, the G-code bridge, the network and the kernel, plus the workshop service's own log and the runs of the start-up. Read-only.",
 		"help_why": "When a plugin does not load, a connection drops or the Pi restarts, the reason is written here. This saves opening a terminal.",
-		"help_how": "Pick the log and how far back. Use the level to see only warnings or errors, or type a word to filter. Turn on Follow live to see new lines every 10 seconds. If it says there is no permission, the service cannot read the log: nothing is lost, only this card stays empty."
+		"help_how": "Pick the log and how far back. Use the level to see only warnings or errors, or type a word to filter. Turn on Follow live to see new lines every 10 seconds. A few known harmless lines (the Wi-Fi driver, a .NET warning, the AppArmor profiles loaded at boot) are hidden so they do not look like alarms: turn on Show known noise to see them, dimmed. If it says there is no permission, the service cannot read the log: nothing is lost, only this card stays empty.",
+		"source_kernel": "Kernel (system messages)",
+		"source_workshop_service": "Workshop service (its own log)",
+		"source_install": "Start-up runs (what the start-up changed)",
+		"unreadable_no_file": "The service log is not on, so there is nothing to show.",
+		"noise": "Show known noise",
+		"noise_tag": "known noise",
+		"noise_hidden": "{n} known harmless lines are hidden (Wi-Fi driver, boot messages)."
+	},
+	"processes": {
+		"title": "Programs",
+		"program": "Program",
+		"cpu": "CPU",
+		"memory": "Memory",
+		"name_service": "Workshop service",
+		"name_dcs": "Duet control server",
+		"name_dws": "Duet web server",
+		"name_dps": "Duet plugin service (and the plugins it runs)",
+		"error_denied": "cannot be measured (no permission)",
+		"error_gone": "not running",
+		"note": "CPU is the share of one core (200 % is two cores busy). The plugin service's CPU includes the plugins it runs, this service among them.",
+		"help_title": "Programs",
+		"help_what": "How much processor and memory the programs that run the machine use right now: the Duet servers and the workshop service.",
+		"help_why": "When the machine answers slowly, this shows which program is busy. The whole Pi can be at 80 % because of one of them.",
+		"help_how": "A value in orange means that program uses a whole core or more. A dash is the first reading: the next one has the value. Memory only matters if it keeps growing for hours.",
+		"name_bridge": "G-code bridge"
 	}
 }

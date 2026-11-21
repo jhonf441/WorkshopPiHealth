@@ -1,5 +1,13 @@
 # WorkshopPiHealth -- historial de versiones
 
+## 2.7.0 -- 2026-11-21
+
+- New "Programs" card: CPU (in percent of one core, so 200 % is two cores busy) and memory of the Duet control, web and plugin servers and of the workshop service itself, with help. The numbers come from the service (`healthPi.processes`, service 2.59.0); with an older service the card does not appear. A program using one whole core or more shows in orange. The G-code bridge is measured too. The plugin service's CPU includes the plugins it runs.
+- The System log card (administrator only) now also reads the workshop's own logs: the service log and the runs of the start-up (what each run changed), with the same period, level, search and follow-live controls as the journal. A service log that is off says so instead of showing an empty list.
+- System log card: fits a 390 px screen (the title, the switches and the Refresh button wrap, and the four filters stack instead of pushing the page wider), with the family colour tokens and nothing under 12 px.
+- System log card: a short closed list of known harmless lines (the Wi-Fi driver's "Unknown Frame", the .NET warning about Wi-Fi 7 and the AppArmor profiles loaded at boot) is hidden by default, so they no longer look like red alarms; the switch "Show known noise" shows them dimmed and tagged, and the card says how many are hidden. AppArmor DENIED lines and every other error stay as they are.
+- Needs WorkshopService 2.59.2 or newer.
+
 ## 2.6.0 -- 2026-11-21
 
 - System log card: reads the journal of one unit through the service (journal.read, administrator only), with window, level, search and follow live

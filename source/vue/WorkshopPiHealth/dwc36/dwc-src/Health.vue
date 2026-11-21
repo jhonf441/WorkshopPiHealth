@@ -262,6 +262,11 @@
 				</v-card>
 			</v-col>
 
+			<!-- CPU and memory of the programs (a service older than 2.58 does not publish it: no card) -->
+			<v-col v-if="sp.processes && sp.processes.length" cols="12" md="6">
+				<processes-card :rows="sp.processes" />
+			</v-col>
+
 			<!-- System log: read-only journal of one unit -->
 			<v-col cols="12">
 				<journal-card />
@@ -307,6 +312,7 @@ import { mapActions } from 'vuex'
 import { api } from './workshop-api.js'
 import DetailChart from './DetailChart.vue'
 import JournalCard from './JournalCard.vue' // system log (journal.read)
+import ProcessesCard from './ProcessesCard.vue' // CPU and memory of the Duet servers and the service (healthPi.processes)
 import { pluginOf, pathExists } from './workshop-ids.js' // Id nuevo o viejo del plugin
 import { serviceTexts } from './service-text.js'
 import ErrorNotice from './ErrorNotice.vue' // vue/_shared
@@ -432,7 +438,7 @@ export default {
 	// what the previous person read stays in no data of the page (ESTANDAR 3.1); onSessionChange reads the history again
 	sessionData: ['serverHist', 'historyError', 'errorAlert', 'changing'],
 	sessionErrors: ['historyError', 'errorAlert'], // what a refusal or a failure said: cleared when the person signs in, out or changes role (role-mixin.js)
-	components: { JournalCard, LockReason, HelpTip, PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
+	components: { ProcessesCard, JournalCard, LockReason, HelpTip, PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
 	data() {
 		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, historyError: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false, alertOps: ALERT_OPS };
 	},

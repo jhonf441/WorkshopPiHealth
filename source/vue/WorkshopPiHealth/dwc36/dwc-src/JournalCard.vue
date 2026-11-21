@@ -1,39 +1,43 @@
 <template>
 	<!-- System log (journal) of one unit: read-only, through the service (journal.read). Administrator only; the service decides, this card only
-	     disables its controls and says why (lock-reason). -->
-	<v-card outlined class="pa-3">
-		<div class="d-flex align-center flex-wrap">
-			<span class="text-h6 mr-2"><v-icon class="mr-1">mdi-text-box-search-outline</v-icon>{{ $t('plugins.WorkshopPiHealth.journal.title') }}<help-tip :title="ht('title')" :what="ht('what')" :why="ht('why')" :how="ht('how')" /></span>
-			<v-spacer />
-			<v-switch v-model="follow" hide-details class="mt-0 mr-3 journal-follow" :disabled="!allowed" :label="$t('plugins.WorkshopPiHealth.journal.follow')" />
-			<v-btn outlined :loading="loading" :disabled="!allowed" class="journal-btn" @click="read"><v-icon left>mdi-refresh</v-icon>{{ $t('plugins.WorkshopPiHealth.journal.refresh') }}</v-btn>
+	     disables its controls and says why (lock-reason). Built to fit a 390 px screen: everything wraps, nothing has a minimum width. -->
+	<v-card outlined class="pa-3 phj-card">
+		<div class="phj-head">
+			<span class="text-h6"><v-icon class="mr-1">mdi-text-box-search-outline</v-icon>{{ $t('plugins.WorkshopPiHealth.journal.title') }}<help-tip :title="ht('title')" :what="ht('what')" :why="ht('why')" :how="ht('how')" /></span>
+			<div class="phj-actions">
+				<v-switch v-model="follow" hide-details class="mt-0 pt-0 phj-switch" :disabled="!allowed" :label="$t('plugins.WorkshopPiHealth.journal.follow')" />
+				<v-switch v-model="showNoise" hide-details class="mt-0 pt-0 phj-switch" :disabled="!allowed" :label="$t('plugins.WorkshopPiHealth.journal.noise')" @change="read" />
+				<v-btn outlined :loading="loading" :disabled="!allowed" class="phj-btn" @click="read"><v-icon left>mdi-refresh</v-icon>{{ $t('plugins.WorkshopPiHealth.journal.refresh') }}</v-btn>
+			</div>
 		</div>
 
 		<v-row dense class="mt-1">
 			<v-col cols="12" sm="6" md="3"><v-select v-model="unit" :items="unitItems" :label="$t('plugins.WorkshopPiHealth.journal.unit')" outlined hide-details :disabled="!allowed" @change="read" /></v-col>
-			<v-col cols="6" md="2"><v-select v-model="since" :items="sinceItems" :label="$t('plugins.WorkshopPiHealth.journal.since')" outlined hide-details :disabled="!allowed" @change="read" /></v-col>
-			<v-col cols="6" md="2"><v-select v-model="level" :items="levelItems" :label="$t('plugins.WorkshopPiHealth.journal.level')" outlined hide-details :disabled="!allowed" @change="read" /></v-col>
-			<v-col cols="12" md="5"><v-text-field v-model="search" :label="$t('plugins.WorkshopPiHealth.journal.search')" outlined hide-details clearable maxlength="80" prepend-inner-icon="mdi-magnify" :disabled="!allowed" @keyup.enter="read" @click:clear="onClear" /></v-col>
+			<v-col cols="12" sm="6" md="2"><v-select v-model="since" :items="sinceItems" :label="$t('plugins.WorkshopPiHealth.journal.since')" outlined hide-details :disabled="!allowed" @change="read" /></v-col>
+			<v-col cols="12" sm="6" md="2"><v-select v-model="level" :items="levelItems" :label="$t('plugins.WorkshopPiHealth.journal.level')" outlined hide-details :disabled="!allowed" @change="read" /></v-col>
+			<v-col cols="12" sm="6" md="5"><v-text-field v-model="search" :label="$t('plugins.WorkshopPiHealth.journal.search')" outlined hide-details clearable maxlength="80" prepend-inner-icon="mdi-magnify" :disabled="!allowed" @keyup.enter="read" @click:clear="onClear" /></v-col>
 		</v-row>
 
 		<lock-reason :ops="OPS" min="admin" :subject="$t('plugins.WorkshopPiHealth.journal.title')" class="mt-2" />
 		<error-notice :error="error" class="mt-2" />
 
-		<div v-if="unreadable" class="text-caption warning--text mt-2">
+		<div v-if="unreadable" class="text-caption warning--text mt-2 phj-wrap">
 			<v-icon x-small color="warning">mdi-alert</v-icon> {{ $t('plugins.WorkshopPiHealth.journal.unreadable_' + unreadable) }}
-			<code v-if="unreadable === 'no_permission'">sudo usermod -aG systemd-journal dsf</code>
+			<code v-if="unreadable === 'no_permission'" class="phj-code">sudo usermod -aG systemd-journal dsf</code>
 		</div>
 		<template v-else-if="result">
-			<div class="text-caption grey--text mt-2">
+			<div class="text-caption grey--text mt-2 phj-wrap">
 				{{ $t('plugins.WorkshopPiHealth.journal.showing', { n: result.lines.length, unit: unitLabel(result.unit), at: readAt }) }}
 				<span v-if="result.truncated"> {{ $t('plugins.WorkshopPiHealth.journal.truncated') }}</span>
+				<span v-if="result.noise_hidden"> {{ $t('plugins.WorkshopPiHealth.journal.noise_hidden', { n: result.noise_hidden }) }}</span>
 			</div>
 			<div v-if="!result.lines.length" class="text-body-2 grey--text mt-2">{{ $t('plugins.WorkshopPiHealth.journal.empty') }}</div>
-			<div v-else ref="box" class="journal-lines mt-1">
-				<div v-for="(l, i) in result.lines" :key="i" class="journal-line" :class="levelClass(l.p)">
-					<span class="journal-time">{{ stamp(l.t) }}</span>
-					<span v-if="l.who && (result.unit === 'kernel' || l.who !== result.unit)" class="journal-who">{{ l.who }}</span>
-					<span class="journal-text">{{ l.text }}</span>
+			<div v-else ref="box" class="phj-lines mt-1">
+				<div v-for="(l, i) in result.lines" :key="i" class="phj-line" :class="levelClass(l)">
+					<span class="phj-time">{{ stamp(l.t) }}</span>
+					<span v-if="l.who && (result.unit === 'kernel' || l.who !== result.unit)" class="phj-who">{{ l.who }}</span>
+					<span v-if="l.noise" class="phj-tag">{{ $t('plugins.WorkshopPiHealth.journal.noise_tag') }}</span>
+					<span class="phj-text">{{ l.text }}</span>
 				</div>
 			</div>
 		</template>
@@ -52,7 +56,8 @@ import LockReason from './LockReason.vue' // vue/_shared36
 import ErrorNotice from './ErrorNotice.vue' // vue/_shared36
 
 // the units and choices the service accepts (dsf/journal_view.py); the service refuses anything else
-const UNITS = ['duetcontrolserver', 'duetwebserver', 'duetpluginservice', 'workshop-gcode-bridge', 'NetworkManager', 'ssh', 'kernel']
+// the system journal units, then the workshop's own logs (the service log and the start-up runs): the service decides what is valid
+const UNITS = ['duetcontrolserver', 'duetwebserver', 'duetpluginservice', 'workshop-gcode-bridge', 'NetworkManager', 'ssh', 'kernel', 'workshop-service', 'install']
 const SINCE = ['15min', '1h', '6h', '24h', '7d']
 const LEVELS = ['all', 'notice', 'warning', 'error']
 const FOLLOW_MS = 10000
@@ -66,7 +71,7 @@ export default {
 	sessionErrors: ['error'],
 	components: { HelpTip, LockReason, ErrorNotice },
 	data() {
-		return { OPS: JOURNAL_OPS, unit: 'duetcontrolserver', since: '1h', level: 'all', search: '', follow: false, loading: false, result: null, error: null, unreadable: '', timer: null }
+		return { OPS: JOURNAL_OPS, unit: 'duetcontrolserver', since: '1h', level: 'all', search: '', follow: false, showNoise: false, loading: false, result: null, error: null, unreadable: '', timer: null }
 	},
 	computed: {
 		allowed() {
@@ -105,7 +110,8 @@ export default {
 			return this.$t('plugins.WorkshopPiHealth.journal.help_' + k)
 		},
 		unitLabel(u) {
-			return u === 'kernel' ? this.$t('plugins.WorkshopPiHealth.journal.kernel') : u
+			const key = 'plugins.WorkshopPiHealth.journal.source_' + u.replace(/-/g, '_')
+			return this.$te(key) ? this.$t(key) : u
 		},
 		stopTimer() {
 			if (this.timer) clearInterval(this.timer)
@@ -124,7 +130,7 @@ export default {
 			if (!this.allowed || this.loading) return
 			this.loading = true
 			try {
-				const r = await api('journal.read', { unit: this.unit, since: this.since, level: this.level, search: this.search || '', lines: LINES })
+				const r = await api('journal.read', { unit: this.unit, since: this.since, level: this.level, search: this.search || '', lines: LINES, noise: this.showNoise ? 'show' : 'hide' })
 				this.error = null
 				if (r && r.readable) {
 					this.unreadable = ''
@@ -142,8 +148,10 @@ export default {
 				this.loading = false
 			}
 		},
-		levelClass(p) {
-			return p <= 3 ? 'error--text' : (p === 4 ? 'warning--text' : (p >= 6 ? 'journal-quiet' : ''))
+		// a known harmless line is dimmed, never red; the rest by its priority (3 and worse red, 4 orange)
+		levelClass(l) {
+			if (l.noise) return 'phj-noise'
+			return l.p <= 3 ? 'error--text' : (l.p === 4 ? 'warning--text' : '')
 		},
 		// the date only when the window is longer than a day
 		stamp(t) {
@@ -154,22 +162,30 @@ export default {
 }
 </script>
 
-<style scoped>
-.journal-lines {
+<style>
+/* phj-* are this card's own classes (the wf-* names belong to the family). The card never pushes the page wider (390 px): everything shrinks or wraps. Colors are the family's tokens; nothing is smaller than 12 px. */
+.phj-card { min-width: 0; max-width: 100%; overflow: hidden; }
+.phj-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
+.phj-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; min-width: 0; margin-left: auto; }
+.phj-card .v-input, .phj-card .v-select__selections { min-width: 0; max-width: 100%; }
+.phj-switch { min-height: 44px; flex: 0 1 auto; }
+.phj-btn { min-height: 44px; max-width: 100%; }
+.phj-wrap { overflow-wrap: anywhere; }
+.phj-code { white-space: normal; overflow-wrap: anywhere; }
+.phj-lines {
 	max-height: 380px;
+	max-width: 100%;
 	overflow: auto;
-	background: rgba(128, 128, 128, 0.08);
+	border: 1px solid var(--wf-line);
 	border-radius: 4px;
 	padding: 6px 8px;
 	font-family: Consolas, 'Liberation Mono', monospace;
 	font-size: 12px;
 	line-height: 1.45;
 }
-/* what is touched is at least 44 px (decision of 2026-11-21: always, not only on touch screens) */
-.journal-btn { min-height: 44px; }
-.journal-follow { min-height: 44px; }
-.journal-line { white-space: pre-wrap; word-break: break-word; }
-.journal-time { opacity: 0.6; margin-right: 8px; white-space: nowrap; }
-.journal-who { opacity: 0.8; margin-right: 8px; }
-.journal-quiet .journal-text { opacity: 0.9; }
+.phj-line { white-space: pre-wrap; overflow-wrap: anywhere; }
+.phj-time { opacity: 0.6; margin-right: 8px; white-space: nowrap; }
+.phj-who { opacity: 0.8; margin-right: 8px; }
+.phj-noise { opacity: 0.55; }
+.phj-tag { border: 1px solid var(--wf-line); border-radius: 4px; padding: 0 4px; margin-right: 8px; font-size: 12px; white-space: nowrap; }
 </style>

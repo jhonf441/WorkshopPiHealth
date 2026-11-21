@@ -340,7 +340,6 @@
 		"since": "Hasta cuándo atrás",
 		"level": "Nivel",
 		"search": "Buscar texto",
-		"kernel": "Kernel (mensajes del sistema)",
 		"since_15min": "Últimos 15 minutos",
 		"since_1h": "Última hora",
 		"since_6h": "Últimas 6 horas",
@@ -358,8 +357,33 @@
 		"empty": "No hay líneas en ese periodo con ese filtro.",
 		"press_refresh": "Elige un registro y pulsa Actualizar.",
 		"help_title": "Registro del sistema",
-		"help_what": "Los mensajes que los programas de la Pi escriben sobre sí mismos: el servidor de control de Duet, su servidor web, el puente de G-code, la red y el kernel. Solo lectura.",
+		"help_what": "Los mensajes que los programas de la Pi escriben sobre sí mismos: el servidor de control de Duet, su servidor web, el puente de G-code, la red y el kernel, más el registro propio del servicio del taller y las corridas de la puesta en marcha. Solo lectura.",
 		"help_why": "Cuando un complemento no carga, se cae una conexión o la Pi se reinicia, el motivo queda escrito aquí. Ahorra abrir una terminal.",
-		"help_how": "Elige el registro y hasta cuándo atrás. Usa el nivel para ver solo advertencias o errores, o escribe una palabra para filtrar. Activa Seguir en vivo para ver líneas nuevas cada 10 segundos. Si dice que no hay permiso, el servicio no puede leer el registro: no se pierde nada, solo esta tarjeta queda vacía."
+		"help_how": "Elige el registro y hasta cuándo atrás. Usa el nivel para ver solo advertencias o errores, o escribe una palabra para filtrar. Activa Seguir en vivo para ver líneas nuevas cada 10 segundos. Unas pocas líneas conocidas e inofensivas (el controlador Wi-Fi, un aviso de .NET, los perfiles de AppArmor cargados al arrancar) quedan ocultas para que no parezcan alarmas: activa Mostrar ruido conocido para verlas, atenuadas. Si dice que no hay permiso, el servicio no puede leer el registro: no se pierde nada, solo esta tarjeta queda vacía.",
+		"source_kernel": "Kernel (mensajes del sistema)",
+		"source_workshop_service": "Servicio del taller (su propio registro)",
+		"source_install": "Corridas de la puesta en marcha (qué cambió)",
+		"unreadable_no_file": "El registro del servicio está apagado, así que no hay nada que mostrar.",
+		"noise": "Mostrar ruido conocido",
+		"noise_tag": "ruido conocido",
+		"noise_hidden": "Hay {n} líneas conocidas e inofensivas ocultas (controlador Wi-Fi, mensajes de arranque)."
+	},
+	"processes": {
+		"title": "Programas",
+		"program": "Programa",
+		"cpu": "CPU",
+		"memory": "Memoria",
+		"name_service": "Servicio del taller",
+		"name_dcs": "Servidor de control de Duet",
+		"name_dws": "Servidor web de Duet",
+		"name_dps": "Servicio de complementos de Duet (y los complementos que corre)",
+		"error_denied": "no se puede medir (sin permiso)",
+		"error_gone": "no está corriendo",
+		"note": "La CPU es la parte de un núcleo (200 % son dos núcleos ocupados). La CPU del servicio de complementos incluye a los complementos que corre, entre ellos este servicio.",
+		"help_title": "Programas",
+		"help_what": "Cuánto procesador y memoria usan ahora los programas que hacen funcionar la máquina: los servidores de Duet y el servicio del taller.",
+		"help_why": "Cuando la máquina responde lento, esto muestra qué programa está ocupado. Toda la Pi puede estar al 80 % por culpa de uno de ellos.",
+		"help_how": "Un valor en naranja es un programa que usa un núcleo entero o más. El guion es la primera lectura: la siguiente ya trae el valor. La memoria solo importa si sigue creciendo durante horas.",
+		"name_bridge": "Puente de G-code"
 	}
 }
