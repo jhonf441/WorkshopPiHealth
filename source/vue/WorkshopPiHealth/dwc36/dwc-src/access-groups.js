@@ -4,6 +4,7 @@
 // locked (reason-mixin.js, access-reason.js). Pure: no imports. The names are the ones of dsf/permissions.json; a test compares both and the API contract.
 //
 //   ALERT_OPS    the switches of the health alerts of the phone
+//   JOURNAL_OPS  the system log card (JournalCard.vue)
 //   READ_OPS     the history of the charts: no group of buttons, asked once so the page opens with one call (its refusal keeps the sentence by cause)
 //   SCREEN_OPS   everything the page asks when it opens, in one call
 //
@@ -11,11 +12,12 @@
 
 export const ALERT_OPS = Object.freeze(['notifications.type'])
 export const READ_OPS = Object.freeze(['health.history'])
+export const JOURNAL_OPS = Object.freeze(['journal.read']) // the system log card (administrator only)
 
 // the groups that carry a sentence, by name: the structure test walks this list
-export const GROUPS = Object.freeze({ alerts: ALERT_OPS })
+export const GROUPS = Object.freeze({ alerts: ALERT_OPS, journal: JOURNAL_OPS })
 
-export const SCREEN_OPS = Object.freeze([].concat(ALERT_OPS, READ_OPS))
+export const SCREEN_OPS = Object.freeze([].concat(ALERT_OPS, READ_OPS, JOURNAL_OPS))
 
 // every operation of the group is allowed by `can` (a function op -> boolean)
 export function groupAllowed(ops, can) {

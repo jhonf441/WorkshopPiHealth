@@ -262,6 +262,11 @@
 				</v-card>
 			</v-col>
 
+			<!-- System log: read-only journal of one unit -->
+			<v-col cols="12">
+				<journal-card />
+			</v-col>
+
 			<!-- Alertas -->
 			<v-col cols="12">
 				<v-card outlined class="pa-3">
@@ -301,6 +306,7 @@ import store from '@/store'
 import { mapActions } from 'vuex'
 import { api } from './workshop-api.js'
 import DetailChart from './DetailChart.vue'
+import JournalCard from './JournalCard.vue' // system log (journal.read)
 import { pluginOf, pathExists } from './workshop-ids.js' // Id nuevo o viejo del plugin
 import { serviceTexts } from './service-text.js'
 import ErrorNotice from './ErrorNotice.vue' // vue/_shared
@@ -426,7 +432,7 @@ export default {
 	// what the previous person read stays in no data of the page (ESTANDAR 3.1); onSessionChange reads the history again
 	sessionData: ['serverHist', 'historyError', 'errorAlert', 'changing'],
 	sessionErrors: ['historyError', 'errorAlert'], // what a refusal or a failure said: cleared when the person signs in, out or changes role (role-mixin.js)
-	components: { LockReason, HelpTip, PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
+	components: { JournalCard, LockReason, HelpTip, PageHeader, ServiceNotice: ServiceNotice, StartupPanel: StartupPanel, DetailChart, ErrorNotice, RangePicker },
 	data() {
 		return { H: H, rangeVal: relative(1, 'hours'), serverHist: null, historyError: null, THRESHOLD: threshold, ALERTS: alerts, changing: null, errorAlert: null, startupWait: false, alertOps: ALERT_OPS };
 	},

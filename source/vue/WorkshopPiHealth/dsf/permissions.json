@@ -3,11 +3,13 @@
   "plugin": "WorkshopPiHealth",
   "namespace": "pihealth",
   "prefixes": [
-    "health"
+    "health",
+    "journal"
   ],
   "ui": "ui:pihealth:open",
   "operations": [
     "health.history",
+    "journal.read",
     "notifications.type",
     "view.heartbeat"
   ],
@@ -15,7 +17,9 @@
     "notifications.type",
     "view.heartbeat"
   ],
-  "restricted": [],
+  "restricted": [
+    "journal.read"
+  ],
   "targets": [],
   "profiles": {
     "readonly": {

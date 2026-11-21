@@ -1,5 +1,9 @@
 # WorkshopPiHealth -- historial de versiones
 
+## 2.6.0 -- 2026-11-21
+
+- System log card: reads the journal of one unit through the service (journal.read, administrator only), with window, level, search and follow live
+
 ## 2.5.11 -- 2026-11-20
 
 - Own calendar in the date range picker (no native date/time fields); PiHealth: the stored-data table moves to the service
