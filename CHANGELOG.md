@@ -1,5 +1,39 @@
 # WorkshopPiHealth -- historial de versiones
 
+## 2.10.1 -- 2026-11-24
+
+- Previous design with the new style: the cards, their order, columns, summary, database table and log filters are as in 2.9.2; the five-card redesign of 2.10.0 is not carried over
+- Dates in words ("today 09:23", "yesterday 18:05", "23-nov 22:47") and "Now" in sentence case instead of NOW
+- Kept from the new style: states as a dot and a word (no filled colored chips, "no data" a chip of outline), outlined ping chips, "See detail" 32 px, log Refresh as the main button (36) with dense fields, switches and buttons sized by the family scale (touch 40), one help fold per card
+
+## 2.9.2 -- 2026-11-23
+
+- optional files are never requested when absent
+
+## 2.9.1 -- 2026-11-22
+
+- select arrows, one focus ring per field, shared family stylesheet split
+
+## 2.9.0 -- 2026-11-22
+
+- One common page bar and 44 px fields
+
+## 2.8.3 -- 2026-11-22
+
+- Rebuild with shared update: start-up card split into modules, neutral Spanish texts, service texts resynced, unused .wf-index rule dropped
+
+## 2.8.2 -- 2026-11-22
+
+- Tuteo in texts (no voseo in es.json).
+
+## 2.8.1 -- 2026-11-22
+
+- Visual review round: single hover and focus for inputs and controls (family styles), 44 px switch and checkbox rows, range picker field 44 px.
+
+## 2.8.0 -- 2026-11-22
+
+- Style unification: shared write state with result, zone and sheet in the journal card and alert actions, compact header and role tag, alert switches 44 px, chart text 12 px, stacked cells in tables on narrow windows, help popovers become the family fold.
+
 ## 2.7.0 -- 2026-11-21
 
 - New "Programs" card: CPU (in percent of one core, so 200 % is two cores busy) and memory of the Duet control, web and plugin servers and of the workshop service itself, with help. The numbers come from the service (`healthPi.processes`, service 2.59.0); with an older service the card does not appear. A program using one whole core or more shows in orange. The G-code bridge is measured too. The plugin service's CPU includes the plugins it runs.
@@ -54,7 +88,7 @@
 
 ## 2.5.1 -- 2026-11-11
 
-- Owner report 2026-11-11: shutdown without session, kiosk PIN pad, hive confirm color, wheel release and Z keys, version in every page bar
+- User report 2026-11-11: shutdown without session, kiosk PIN pad, hive confirm color, wheel release and Z keys, version in every page bar
 
 ## 2.5.0 -- 2026-11-11
 

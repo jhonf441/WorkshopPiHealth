@@ -2,7 +2,7 @@
 	<!-- CPU and memory of the Duet servers and of the workshop service, published by the service (healthPi.processes). Nothing to press: it is a reading. -->
 	<v-card outlined class="pa-3">
 		<div class="d-flex align-center flex-wrap">
-			<span class="text-h6"><v-icon class="mr-1">mdi-chart-box-outline</v-icon>{{ $t('plugins.WorkshopPiHealth.processes.title') }}<help-tip :title="ht('title')" :what="ht('what')" :why="ht('why')" :how="ht('how')" /></span>
+			<span class="text-h6"><v-icon class="mr-1">mdi-chart-box-outline</v-icon>{{ $t('plugins.WorkshopPiHealth.processes.title') }}</span>
 		</div>
 		<v-simple-table class="mt-2">
 			<thead>
@@ -26,20 +26,21 @@
 			</tbody>
 		</v-simple-table>
 		<div class="text-caption grey--text mt-1">{{ $t('plugins.WorkshopPiHealth.processes.note') }}</div>
+		<help-fold :items="[{ title: ht('title'), what: ht('what'), why: ht('why'), how: ht('how') }]" />
 	</v-card>
 </template>
 
 <script>
 'use strict'
 
-import HelpTip from './HelpTip.vue' // vue/_shared36
+import HelpFold from './HelpFold.vue' // vue/_shared36
 
 // a program using more than one full core is worth a look: the Pi has four
 const HOT_CPU_PCT = 100
 
 export default {
 	name: 'ProcessesCard',
-	components: { HelpTip },
+	components: { HelpFold },
 	props: { rows: { type: Array, default: () => [] } },
 	methods: {
 		ht(k) {

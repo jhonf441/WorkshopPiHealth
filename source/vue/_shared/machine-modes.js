@@ -234,8 +234,8 @@ const NEW_OF_OLD = {
 // The old-layout mode files that are still there while their new path is not: `read(path)` -> text | null (404), may throw (then that file
 // says nothing). Only to SAY "modes not migrated" (the start-up wizard moves them); the page never uses the old files.
 // A machine that is migrated has NONE of the old files, and asking for five files that are not there writes "Could not find file" in the machine log (twice each, with
-// the .bak) every time a page looks. When none was there it is remembered for 15 minutes (memory + sessionStorage): the question is not asked again in the session.
-const NONE_OLD_MS = 15 * 60 * 1000;
+// the .bak) every time a page looks. When none was there it is remembered for 1 hour (memory + sessionStorage; nothing ever writes the old paths, so there is nothing to forget): the question is not asked again in the session.
+const NONE_OLD_MS = 60 * 60 * 1000;
 const NONE_OLD_KEY = 'workshopModesNoOldFiles';
 let noneOldAt = 0;
 function noneOldRecently() {

@@ -2,7 +2,7 @@
   "id": "WorkshopPiHealth",
   "name": "System Health",
   "author": "jhonf441",
-  "version": "2.7.0",
+  "version": "2.10.1",
   "license": "GPL-3.0-or-later",
   "homepage": "https://github.com/jhonf441/WorkshopPiHealth",
   "tags": [
@@ -20,9 +20,9 @@
     "permissions.json"
   ],
   "dwcFiles": [
-    "css/WorkshopPiHealth.4f2b2697.css",
-    "css/WorkshopPiHealth.4f2b2697.css.gz",
-    "js/WorkshopPiHealth.af51ce56.js",
-    "js/WorkshopPiHealth.af51ce56.js.gz"
+    "css/WorkshopPiHealth.89041384.css",
+    "css/WorkshopPiHealth.89041384.css.gz",
+    "js/WorkshopPiHealth.c1d506ec.js",
+    "js/WorkshopPiHealth.c1d506ec.js.gz"
   ]
 }

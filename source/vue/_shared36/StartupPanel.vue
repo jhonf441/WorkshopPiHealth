@@ -16,7 +16,7 @@
 		     Nothing to do but rows nobody could check (no session): a quiet icon in the session blue, no words: the bar already carries the one
 		     "Sign in" chip, and "1 step pending" next to it was not a step at all. -->
 		<v-chip v-if="summary.pending" small outlined color="warning" class="startup-chip" :title="chipHelp" @click="openDialog">
-			<v-icon small left>mdi-rocket-launch-outline</v-icon>{{ tt('chip_pending', { n: summary.pending }) }}
+			<v-icon small left>mdi-rocket-launch-outline</v-icon>{{ tt(summary.pending === 1 ? 'chip_pending_one' : 'chip_pending', { n: summary.pending }) }}
 		</v-chip>
 		<v-btn v-else icon small class="startup-chip" :title="chipHelp" @click="openDialog">
 			<v-icon small :color="summary.ready ? 'success' : 'info'">mdi-rocket-launch-outline</v-icon>
